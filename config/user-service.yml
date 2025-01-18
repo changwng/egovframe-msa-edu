@@ -1,0 +1,42 @@
+database:
+  url: jdbc:postgresql://${db.hostname:localhost}:5432/msaportal
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${db.hostname:localhost}:5432/msaportal
+    username: msaportal
+    password: msaportal
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 30
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      platform: postgresql
+  mail: # 비밀번호 변경 이메일 발송
+    host: smtp.gmail.com # smtp host
+    port: 587 # smtp port
+    username: email_username # 계정
+    password: 'email_password' # 비밀번호 - 구글 보안 2단계 인증 해제, 보안 수준이 낮은 앱의 액세스 허용(https://myaccount.google.com/lesssecureapps)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

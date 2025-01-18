@@ -1,0 +1,27 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://${db.hostname:localhost}:5432/msaportal
+    username: msaportal
+    password: msaportal
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 30
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_batch_fetch_size: 1000
+    show-sql: true
+  cloud:
+    stream:
+      bindings:
+        attachmentEntity-out-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트
+          destination: attachment-entity.topic # queue name
+          group: attachment

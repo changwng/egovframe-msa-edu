@@ -1,0 +1,92 @@
+version: '3.7'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:22.3
+    platform: linux/arm64
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - ./data/clickhouse:/var/lib/clickhouse
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+      - "9009:9009"
+    environment:
+      - CLICKHOUSE_DB=signoz_traces
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - signoz-network
+
+  otel-collector:
+    image: signoz/signoz-otel-collector:0.111.23-a4dd4ee
+    platform: linux/arm64
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"    # OTLP gRPC receiver
+      - "4318:4318"    # OTLP http receiver
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - signoz-network
+
+  signoz-query-service:
+    container_name: signoz-query-service
+    image: signoz/query-service:0.68.0
+    platform: linux/arm64
+    volumes:
+      - ./data/signoz:/var/lib/signoz
+    ports:
+      - "8085:8080"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    environment:
+      - ClickHouseUrl=tcp://clickhouse:9000
+      - STORAGE=clickhouse
+      - GODEBUG=netdns=go
+      - CLICKHOUSE_DATABASE=signoz_traces
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=
+      - SIGNOZ_ENABLE_AUTH=true
+      - SIGNOZ_AUTH_PROVIDER=basic
+      - SIGNOZ_DEFAULT_EMAIL=admin@signoz.io
+      - SIGNOZ_DEFAULT_PASSWORD=Admin@123
+    networks:
+      - signoz-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  signoz-frontend:
+    container_name: signoz-frontend
+    image: signoz/frontend:0.68.0
+    platform: linux/arm64
+    ports:
+      - "3301:3301"
+    depends_on:
+      signoz-query-service:
+        condition: service_healthy
+    networks:
+      - signoz-network
+    environment:
+      - SIGNOZ_API_URL=http://signoz-query-service:8080
+      - SIGNOZ_ENABLE_AUTH=true
+
+networks:
+  signoz-network:
+    driver: bridge

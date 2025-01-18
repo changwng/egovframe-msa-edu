@@ -1,0 +1,9 @@
+LOAD DATABASE
+     FROM mysql://msaportal:msaportal@localhost:3306/msaportal
+     INTO postgresql://msaportal:msaportal@localhost:5432/msaportal
+
+WITH include no drop, create tables, create indexes, reset sequences
+
+SET work_mem to '16MB', maintenance_work_mem to '512 MB'
+
+ALTER SCHEMA 'msaportal' RENAME TO 'public';

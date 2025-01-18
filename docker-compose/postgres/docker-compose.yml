@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: msaportal
+      POSTGRES_PASSWORD: msaportal
+      POSTGRES_DB: msaportal
+      TZ: Asia/Seoul
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d/
+    platform: linux/x86_64
+    ports:
+      - "5432:5432"
+    container_name: postgres
+
+networks:
+  default:
+    name: egovframe-network
