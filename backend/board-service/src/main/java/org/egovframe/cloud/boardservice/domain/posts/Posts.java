@@ -93,7 +93,7 @@ public class Posts extends BaseEntity {
     /**
      * 삭제 여부
      */
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "int2 default 0")
     private Integer deleteAt;
 
     /**

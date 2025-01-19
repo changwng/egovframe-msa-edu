@@ -44,6 +44,12 @@ spring:
             - Path=/reserve-request-service/**
           filters:
             - RewritePath=/reserve-request-service/(?<segment>.*), /$\{segment}
+        - id: cms-service
+          uri: lb://CMS-SERVICE
+          predicates:
+            - Path=/cms-service/**
+          filters:
+            - RewritePath=/cms-service/(?<segment>.*), /$\{segment}
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:

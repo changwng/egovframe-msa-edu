@@ -1,6 +1,7 @@
 package org.egovframe.cloud.boardservice.domain.comment;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.*;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.egovframe.cloud.boardservice.api.comment.dto.CommentListResponseDto;
 import org.egovframe.cloud.boardservice.api.comment.dto.QCommentListResponseDto;
 import org.egovframe.cloud.boardservice.domain.user.QUser;
+import org.egovframe.cloud.boardservice.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -135,7 +137,9 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
         NumberPath<Integer> sortSeqPath = Expressions.numberPath(Integer.class, commentPath, "sort_seq");
         NumberPath<Integer> deleteAtPath = Expressions.numberPath(Integer.class, commentPath, "delete_at");
 
-        StringPath userPath = Expressions.stringPath("user");
+        PathBuilder<User> userPathBuilder = new PathBuilder<>(User.class, "u_user");
+        StringPath userNamePath = userPathBuilder.getString("user_name");
+        StringPath userIdPath = userPathBuilder.getString("user_id");
 
         BooleanExpression deleteAtExpression = null;
         if (deleteAt != null) {
@@ -169,13 +173,13 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                         Expressions.numberPath(Integer.class, commentPath, "sort_seq"),
                         Expressions.numberPath(Integer.class, commentPath, "delete_at"),
                         Expressions.stringPath(commentPath, "created_by"),
-                        Expressions.stringPath(userPath, "user_name"),
+                        userNamePath,
                         Expressions.datePath(LocalDateTime.class, commentPath, "created_date")))
                 .from(comment)
                 .innerJoin(groupComment, groupCommentPath).on(Expressions.numberPath(Integer.class, groupCommentPath, "board_no").eq(boardNoPath)
                         .and(Expressions.numberPath(Integer.class, groupCommentPath, "posts_no").eq(postsNoPath))
                         .and(Expressions.numberPath(Integer.class, groupCommentPath, "comment_no").eq(groupNoPath)))
-                .leftJoin(user).on(Expressions.stringPath(commentPath, "created_by").eq(Expressions.stringPath(userPath, "user_id")))
+                .leftJoin(userPathBuilder).on(Expressions.stringPath(commentPath, "created_by").eq(userIdPath))
                 .where(boardNoPath.eq(boardNo)
                         .and(postsNoPath.eq(postsNo))
                         .and(deleteAtExpression))

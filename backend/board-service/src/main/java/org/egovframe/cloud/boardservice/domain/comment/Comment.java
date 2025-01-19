@@ -74,7 +74,7 @@ public class Comment extends BaseEntity {
     /**
      * 삭제 여부
      */
-    @Column(nullable = false, columnDefinition = "integer default 0")
+    @Column(nullable = false, columnDefinition = "int2 default 0")
     private Integer deleteAt; // 0:미삭제, 1:작성자삭제, 2:관리자삭제
 
     /**
