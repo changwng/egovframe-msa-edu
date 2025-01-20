@@ -9,11 +9,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Bean
+ /*   @Bean
     public MappingJackson2HttpMessageConverter jsonEscapeConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
         // HTML 이스케이프 처리
         objectMapper.getFactory().setCharacterEscapes(new HTMLCharacterEscapes());
         return new MappingJackson2HttpMessageConverter(objectMapper);
-    }
+    }*/
 }
