@@ -10,10 +10,10 @@ spring:
     hikari:
       minimum-idle: 10
       maximum-pool-size: 30
-  cloud:
+      cloud:
     stream:
       bindings:
-        attachmentEntity-out-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트
+        attachmentEntity-out-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트 보내기, 받기 ,
           destination: attachment-entity.topic # queue name
           group: attachment
   jpa:
@@ -29,7 +29,63 @@ spring:
         default_batch_fetch_size: 1000
     show-sql: true
     defer-datasource-initialization: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  cloud:
+    stream:
+      function:
+        definition: atflMngEntity;busConsumer # 첨부파일 entity 정보 업데이트 하기 위한 이벤트에 대한 consumer function & springcloudbus consumer function
+      bindings:
+        busConsumer-in-0:
+          destination: ${spring.cloud.bus.destination}
+        atflMngEntity-in-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트
+          destination: atfl-mng-entity.topic # queue name
+          group: atfl-mng
+        atflMngEntity-out-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트
+          destination: atfl-mng-entity.topic # queue name
+          group: atfl-mng
   sql:
     init:
       mode: always
       platform: postgresql
+
+app:
+  file:
+    storage:
+      path: ${user.home}/egovframe-msa-edu/files/cms
+      allowed-extensions: jpg,jpeg,gif,png,pdf,doc,docx,xls,xlsx,ppt,pptx,txt
+      max-file-size: 104857600  # 100MB
+      temp-file-retention: 7
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Swagger 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    operations-sorter: method
+    disable-swagger-default-url: true
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+logging:
+  level:
+    root: INFO
+    org.egovframe: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
