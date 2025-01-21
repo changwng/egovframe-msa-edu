@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +25,13 @@ import org.springframework.core.io.Resource;
  */
 @Getter
 @NoArgsConstructor
+@Schema(description = "첨부파일 다운로드 응답 DTO")
 public class AtflMngDownloadResponseDto {
 
+    @Schema(description = "원본 파일명")
     private String originalFileName;
+    
+    @Schema(description = "다운로드 파일 리소스")
     private Resource file;
 
     @Builder

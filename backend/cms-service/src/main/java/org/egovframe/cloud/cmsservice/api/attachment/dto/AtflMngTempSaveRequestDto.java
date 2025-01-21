@@ -1,11 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.Objects;
-import java.util.UUID;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +9,7 @@ import org.egovframe.cloud.cmsservice.domain.attachment.AtflMng;
 import org.egovframe.cloud.cmsservice.domain.attachment.AtflMngId;
 import org.springframework.util.StringUtils;
 import java.util.Objects;
-import lombok.ToString;
+import java.util.UUID;
 
 /**
  * org.egovframe.cloud.cmsservice.api.attachment.dto.AtflMngTempSaveRequestDto
@@ -36,20 +31,36 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
+@Schema(description = "첨부파일 임시 저장 요청 DTO")
 public class AtflMngTempSaveRequestDto {
-    private String atflId;               // 첨부파일 ID (URI용 대체키)
-    private String orgnlFileNm;    // 원본 파일명
-    private String physFileNm;     // 물리 파일명
-    private Long atflFlsz;         // 파일 크기
-    private String atflType;       // 파일 유형
+    @Schema(description = "첨부파일 ID (URI용 대체키)")
+    private String atflId;
+    
+    @Schema(description = "원본 파일명")
+    private String orgnlFileNm;
+    
+    @Schema(description = "물리 파일명")
+    private String physFileNm;
+    
+    @Schema(description = "파일 크기")
+    private Long atflFlsz;
+    
+    @Schema(description = "파일 유형")
+    private String atflType;
+    
+    @Schema(description = "연결 도메인명")
+    private String lnkgDmnNm;
+    
+    @Schema(description = "연결 도메인 ID")
+    private String lnkgDmnId;
+    
+    @Schema(description = "삭제여부")
+    private String delYn;
 
-    private String lnkgDmnNm;     // 연결 도메인명
-
-    private String lnkgDmnId;     // 연결 도메인 ID
-    private String delYn;          // 삭제여부
     public boolean hasAtflId() {
         return Objects.nonNull(atflId) || StringUtils.hasText(atflId);
     }
+
     @Builder
     public AtflMngTempSaveRequestDto(String atflId, String orgnlFileNm, String physFileNm, Long atflFlsz, String atflType,
                                      String lnkgDmnNm, String lnkgDmnId, String delYn) {
@@ -69,13 +80,14 @@ public class AtflMngTempSaveRequestDto {
     public AtflMng toEntity(AtflMngId atflMngId, String physicalFileName) {
         return AtflMng.builder()
                 .atflMngId(atflMngId)
-                .atflId(UUID.randomUUID().toString())
+                .atflId(atflId == null ? UUID.randomUUID().toString() : atflId)
                 .physFileNm(physicalFileName)
                 .orgnlFileNm(this.orgnlFileNm)
                 .atflFlsz(this.atflFlsz)
                 .atflType(this.atflType)
                 .lnkgDmnNm(this.lnkgDmnNm)
                 .lnkgDmnId(this.lnkgDmnId)
+                .delYn(this.delYn)
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,11 +28,17 @@ import java.util.UUID;
  */
 @Getter
 @NoArgsConstructor
+@Schema(description = "첨부파일 업로드 응답 DTO")
 public class AtflMngFileResponseDto extends AtflMngUploadResponseDto{
+    @Schema(description = "원본 파일명")
     private String orgnlFileNm;    // 원본 파일명
+    @Schema(description = "물리 파일명")
     private String physFileNm;     // 물리 파일명
+    @Schema(description = "처리 메시지")
     private String message;        // 처리 메시지
+    @Schema(description = "파일 크기")
     private Long atflFlsz;         // 파일 크기
+    @Schema(description = "파일 유형")
     private String atflType;       // 파일 유형
 
     @Builder

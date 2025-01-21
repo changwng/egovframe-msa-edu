@@ -19,8 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
 /**
  * org.egovframe.cloud.cmsservice.api.attachment.AtflMngApiController
  * <p>
@@ -52,7 +55,6 @@ public class AtflMngApiController {
      *
      * @param file
      * @return
-     * @throws Exception
      */
     @PostMapping(value = "/api/v1/atfl/upload")
     @ResponseStatus(HttpStatus.CREATED)
@@ -60,100 +62,303 @@ public class AtflMngApiController {
         return atflMngService.uploadFile(file);
     }
 
-   /* *//**
+    /**
      * 첨부파일 업로드 - 여러 건
      * 물리적 파일에 대해 업로드만 진행 (.temp)
      * 추후 저장 필요
      *
      * @param files
      * @return
-     *//*
+     */
     @PostMapping(value = "/api/v1/atfl/upload/multi")
     @ResponseStatus(HttpStatus.CREATED)
     public List<AtflMngFileResponseDto> uploadMulti(@RequestParam("files") List<MultipartFile> files) {
         return atflMngService.uploadFiles(files);
     }
 
-    *//**
+    /**
      * 에디터에서 파일 업로드
      * 현재 이미지만 적용
      *
      * @param editorRequestDto
      * @return
-     *//*
+     */
     @PostMapping(value = "/api/v1/atfl/upload/editor")
     @ResponseStatus(HttpStatus.CREATED)
     public AtflMngEditorResponseDto uploadEditor(@RequestBody AtflMngBase64RequestDto editorRequestDto) {
         return atflMngService.uploadEditor(editorRequestDto);
     }
 
-    *//**
+    /**
      * 에디터에서 파일 경로(명) 이미지 load
      *
      * @param imagename
      * @return
-     * @throws IOException
-     *//*
+     */
     @GetMapping(value = "/api/v1/atfl/images/editor/{imagename}")
     public ResponseEntity<byte[]> loadImages(@PathVariable("imagename") String imagename) {
         AtflMngImageResponseDto image = atflMngService.loadImage(imagename);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(image.getContentType()))
-                .body(image.getImageContent());
+                .contentType(MediaType.parseMediaType(image.getMimeType()))
+                .body(image.getData());
     }
 
-    *//**
-     * 첨부파일 임시 저장 처리
-     * 첨부파일 저장 - 물리적 파일은 .temp로 저장 된 후 호출되어야 함
-     * 새롭게 attachment code를 생성해야 하는 경우
-     * @param saveRequestDtoList
-     * @return
-     *//*
-    @PostMapping("/api/v1/atfl/file")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String save(@Valid @RequestBody List<AtflMngTempSaveRequestDto> saveRequestDtoList ) throws BusinessMessageException, IOException { //AtflMngTempSaveRequestDto saveRequestDto) {
-        return atflMngService.saveTemp(saveRequestDtoList);
-    }
-
-    *//**
-     * 첨부파일 다운로드
-     *
-     * @param atflId 첨부파일 ID
-     * @return ResponseEntity<Resource>
-     *//*
-    @GetMapping("/api/v1/atfl/download/{atflId}")
-    public ResponseEntity<Resource> download(@PathVariable String atflId) {
-        AtflMngDownloadResponseDto responseDto = atflMngService.download(atflId);
-        
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(responseDto.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        ContentDisposition.builder("attachment")
-                                .filename(responseDto.getOrgnlFileNm(), StandardCharsets.UTF_8)
-                                .build().toString())
-                .body(responseDto.getFile());
-    }
-
-    *//**
-     * 첨부파일 페이징 목록 조회
-     *
-     * @param requestDto
-     * @param pageable
-     * @return
-     *//*
-    @GetMapping("/api/v1/atfl/attachments")
-    public Page<AtflMngResponseDto> search(RequestDto requestDto, Pageable pageable) {
-        return atflMngService.search(requestDto, pageable);
-    }
-
-    *//**
-     * 첨부파일 삭제
+    /**
+     * unique id로 이미지 태그에서 이미지 load
      *
      * @param atflId
-     *//*
-    @DeleteMapping("/api/v1/atfl/attachments/{atflId}")
+     * @return
+     */
+    @GetMapping(value = "/api/v1/atfl/images/{atflId}")
+    public ResponseEntity<byte[]> loadImagesByUniqueId(@PathVariable String atflId) {
+        AtflMngImageResponseDto image = atflMngService.loadImageByUniqueId(atflId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getMimeType()))
+                .body(image.getData());
+    }
+
+    /**
+     * 첨부파일 다운로드
+     *
+     * @param atflId
+     * @return
+     */
+    @GetMapping(value = "/api/v1/atfl/download/{atflId}")
+    public ResponseEntity<?> downloadFile(@PathVariable String atflId) {
+        AtflMngDownloadResponseDto downloadFile = atflMngService.downloadFile(atflId);
+
+        String mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(downloadFile.getOriginalFileName(), StandardCharsets.UTF_8)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, mimeType);
+        headers.setContentDisposition(contentDisposition);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(downloadFile.getFile());
+        /*
+          AttachmentDownloadResponseDto downloadFile = attachmentService.downloadFile(uniqueId);
+
+        String mimeType = null;
+        try {
+            // get mime type
+            URLConnection connection = new URL(downloadFile.getFile().getURL().toString()).openConnection();
+            mimeType = connection.getContentType();
+        } catch (IOException ex) {
+            log.error("download fail", ex);
+            throw new BusinessMessageException("Sorry. download fail... \uD83D\uDE3F");
+        }
+
+        if (mimeType == null) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(downloadFile.getOriginalFileName(), StandardCharsets.UTF_8)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, mimeType);
+        headers.setContentDisposition(contentDisposition);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(downloadFile.getFile());
+         */
+    }
+
+    /**
+     * 첨부파일 코드로 첨부파일 목록 조회
+     *
+     * @param atflCd
+     * @return
+     */
+    @GetMapping(value = "/api/v1/atfl/attachments/{atflCd}")
+    public List<AtflMngResponseDto> findByCode(@PathVariable String atflCd) {
+        return atflMngService.findByCode(atflCd);
+    }
+
+    /**
+     * 첨부파일 다운로드
+     *
+     * @param atflId
+     * @return
+     */
+    @GetMapping(value = "/api/v1/atfl/attachments/download/{atflId}")
+    public ResponseEntity<?> downloadAttachment(@PathVariable String atflId) {
+        AtflMngDownloadResponseDto downloadFile = atflMngService.downloadAttachment(atflId);
+
+        String mimeType = null;
+        try {
+            // get mime type
+            URLConnection connection = new URL(downloadFile.getFile().getURL().toString()).openConnection();
+            mimeType = connection.getContentType();
+        } catch (IOException ex) {
+            log.error("download fail", ex);
+            throw new BusinessMessageException("Sorry. download fail... \uD83D\uDE3F");
+        }
+
+        if (mimeType == null) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(downloadFile.getOriginalFileName(), StandardCharsets.UTF_8)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, mimeType);
+        headers.setContentDisposition(contentDisposition);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(downloadFile.getFile());
+    }
+
+    /**
+     * 첨부파일 저장 - 물리적 파일은 .temp로 저장 된 후 호출되어야 함
+     * 새롭게 attachment code를 생성해야 하는 경우
+     *
+     * @param saveRequestDtoList
+     * @return 새로 생성한 첨부파일 code
+     */
+    @PostMapping(value = "/api/v1/atfl/attachments/file")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String save(@RequestBody List<AtflMngTempSaveRequestDto> saveRequestDtoList) {
+        return atflMngService.save(saveRequestDtoList);
+    }
+
+    /**
+     * 첨부파일 저장 - 물리적 파일은 .temp로 저장 된 후 호출되어야 함
+     * 이미 attachment code 가 있는 경우 seq만 새로 생성해서 저장
+     * or
+     * isDelete = true 인 경우 삭제 여부 Y
+     *
+     * @param saveRequestDtoList
+     * @return
+     */
+    @PutMapping(value = "/api/v1/atfl/attachments/file/{atflCd}")
+    public String saveByCode(@PathVariable String atflCd, @RequestBody List<AtflMngTempSaveRequestDto> saveRequestDtoList) {
+        return atflMngService.saveByCode(atflCd, saveRequestDtoList);
+    }
+
+    /**
+     * 관리자 - 전체 첨부파일 목록 조회
+     *
+     * @param searchRequestDto
+     * @param pageable
+     * @return
+     */
+    @GetMapping(value = "/api/v1/atfl/attachments")
+    public Page<AtflMngResponseDto> search(RequestDto searchRequestDto, Pageable pageable) {
+        return atflMngService.search(searchRequestDto, pageable);
+    }
+
+    /**
+     * 관리자 - 삭제여부 토글
+     *
+     * @param atflId
+     * @param delYn
+     * @return
+     */
+    @PutMapping(value = "/api/v1/atfl/attachments/{atflId}/{delYn}")
+    public String toggleDelete(@PathVariable String atflId, @PathVariable String delYn) {
+        return atflMngService.toggleDelete(atflId, delYn);
+    }
+
+    /**
+     * 관리자 - 하나의 파일 삭제
+     * 물리적 파일 삭제
+     *
+     * @param atflId
+     */
+    @DeleteMapping(value = "/api/v1/atfl/attachments/{atflId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String atflId) {
         atflMngService.delete(atflId);
-    }*/
+    }
+
+    /**
+     * 첨부파일 저장
+     * 새롭게 attachment code를 생성해야 하는 경우
+     *
+     * @param files
+     * @param uploadRequestDto
+     * @return
+     */
+    @PostMapping(value = "/api/v1/atfl/attachments/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.CREATED)
+    public String uploadAndSave(@RequestPart(value = "files", required = true) List<MultipartFile> files,
+                              @RequestPart(value = "info", required = false) AtflMngUploadRequestDto uploadRequestDto) {
+        return atflMngService.uploadAndSave(files, uploadRequestDto);
+    }
+
+    /**
+     * 첨부파일 저장
+     * 이미 attachment code 가 있는 경우 이므로 seq만 새로 생성해서 저장
+     * or
+     * isDelete = true 인 경우 삭제 여부 Y
+     *
+     * @param files
+     * @param atflCd
+     * @param uploadRequestDto
+     * @param updateRequestDtoList
+     * @return
+     */
+    @PutMapping(value = "/api/v1/atfl/attachments/upload/{atflCd}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public String uploadAndUpdate(@PathVariable String atflCd,
+                                @RequestPart(value = "files", required = true) List<MultipartFile> files,
+                                @RequestPart(value = "info", required = true) AtflMngUploadRequestDto uploadRequestDto,
+                                @RequestPart(value = "list", required = false) List<AtflMngUpdateRequestDto> updateRequestDtoList) {
+        return atflMngService.uploadAndUpdate(files, atflCd, uploadRequestDto, updateRequestDtoList);
+    }
+
+    /**
+     * 첨부파일 저장 - 업로드 없이 기존 파일만 삭제
+     * isDelete = true 인 경우 삭제 여부 Y
+     *
+     * @param atflCd
+     * @param uploadRequestDto
+     * @param updateRequestDtoList
+     * @return
+     */
+    @PutMapping(value = "/api/v1/atfl/attachments/{atflCd}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public String update(@PathVariable String atflCd,
+                        @RequestPart(value = "info") AtflMngUploadRequestDto uploadRequestDto,
+                        @RequestPart(value = "list") List<AtflMngUpdateRequestDto> updateRequestDtoList) {
+        return atflMngService.uploadAndUpdate(null, atflCd,
+                uploadRequestDto, updateRequestDtoList);
+    }
+
+    /**
+     * attachmentCode로 해당하는 모든 첨부파일의 entity 정보 업데이트
+     * 신규 entity의 경우 entity가 저장 된 후 entity id가 생성되므로
+     * entity 저장 후 해당 api 호출하여 entity 정보를 업데이트 해준다.
+     *
+     * @param atflCd
+     * @param uploadRequestDto
+     * @return
+     */
+    @PutMapping("/api/v1/atfl/attachments/{atflCd}/info")
+    public String updateEntity(@PathVariable String atflCd,
+                             @RequestBody AtflMngUploadRequestDto uploadRequestDto) {
+        return atflMngService.updateEntity(atflCd, uploadRequestDto);
+    }
+
+    /**
+     * 첨부파일 저장 후 기능 저장 시 오류 날 경우
+     * 해당 첨부파일 코드에 조회되는 첨부파일 목록 전부 삭제
+     * rollback
+     *
+     * @param atflCd
+     */
+    @DeleteMapping("/api/v1/atfl/{atflCd}/children")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllEmptyEntity(@PathVariable String atflCd) {
+        atflMngService.deleteAllEmptyEntity(atflCd);
+    }
 }

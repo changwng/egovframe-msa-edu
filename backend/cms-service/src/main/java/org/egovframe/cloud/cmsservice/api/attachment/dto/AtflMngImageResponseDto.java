@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +24,12 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@Schema(description = "첨부파일 이미지 응답 DTO")
 public class AtflMngImageResponseDto {
+    @Schema(description = "MIME 타입")
     private String mimeType;
+    
+    @Schema(description = "이미지 데이터 바이트 배열")
     private byte[] data;
 
     @Builder

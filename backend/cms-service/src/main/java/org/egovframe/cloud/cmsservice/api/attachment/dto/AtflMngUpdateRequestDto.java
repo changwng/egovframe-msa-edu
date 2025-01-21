@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,8 +26,12 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
+@Schema(description = "첨부파일 수정 요청 DTO")
 public class AtflMngUpdateRequestDto {
+    @Schema(description = "첨부파일 ID")
     private String atflId;
+    
+    @Schema(description = "삭제 여부")
     private String delYn;
 
     @Builder

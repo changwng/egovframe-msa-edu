@@ -270,17 +270,17 @@ public class AtflMngService extends AbstractService {
      * @return byte[]
      */
     public byte[] getDownloadFile(String physFileNm) {
-        return  null ; //storageUtils.getDownloadFile(physFileNm);
+        return null ; // storageUtils.getDownloadFile(physFileNm);
     }
     /**
      * 첨부파일 코드로 첨부파일 목록 조회
      *
-     * @param attachmentCode
+     * @param atflCd
      * @return
      */
     @Transactional(readOnly = true)
-    public List<AtflMngResponseDto> findByCode(String attachmentCode) {
-        List<AtflMng> attachmentList = atflMngRepository.findByCode(attachmentCode);
+    public List<AtflMngResponseDto> findByCode(String atflCd) {
+        List<AtflMng> attachmentList = atflMngRepository.findByCode(atflCd);
         return attachmentList.stream()
                 .map(atflMng -> AtflMngResponseDto.builder().atflMng(atflMng).build())
                 .collect(Collectors.toList());
@@ -289,12 +289,12 @@ public class AtflMngService extends AbstractService {
     /**
      * 첨부파일 다운로드 - 삭제 파일 가능
      *
-     * @param uniqueId
+     * @param atflId
      * @return
      */
     @Transactional
-    public AtflMngDownloadResponseDto downloadAttachment(String uniqueId) throws EntityNotFoundException {
-        AtflMng atflMng = findAttachmentByUniqueId(uniqueId);
+    public AtflMngDownloadResponseDto downloadAttachment(String atflId) throws EntityNotFoundException {
+        AtflMng atflMng = findAttachmentByUniqueId(atflId);
 
         Resource resource = storageUtils.downloadFile(atflMng.getPhysFileNm());
 
@@ -400,6 +400,7 @@ public class AtflMngService extends AbstractService {
      * @param delYn
      * @return
      */
+    @Transactional
     public String toggleDelete(String aftflId, String delYn) throws EntityNotFoundException {
         AtflMng atflMng = findAttachmentByUniqueId(aftflId);
         atflMng.updateIsDelYn(delYn);
@@ -425,18 +426,45 @@ public class AtflMngService extends AbstractService {
     /**
      * 첨부파일 엔티티 정보 업데이트
      *
-     * @param atflId 첨부파일 ID
-     * @param requestDto 업데이트 요청 DTO
+     * @param atflCd 첨부파일 코드
+     * @param uploadRequestDto 업데이트 요청 DTO
      */
     @Transactional
-    public void updateEntity(String atflId, AtflMngTempSaveRequestDto requestDto) {
-        AtflMng atflMng = atflMngRepository.findByAtflId(atflId)
+    public String updateEntity(String atflCd, AtflMngUploadRequestDto  uploadRequestDto) {
+     /*   AtflMng atflMng = atflMngRepository.findByAtflId(atflId)
                 .orElseThrow(() -> new BusinessMessageException(getMessage("valid.file.not_found")));
 
-        atflMng.updateEntity(requestDto.getLnkgDmnId(), requestDto.getLnkgDmnNm());
+        atflMng.updateEntity(requestDto.getLnkgDmnNm(), requestDto.getLnkgDmnId());*/
+        List<AtflMng> attachments = atflMngRepository.findByCode(atflCd);
+        for (AtflMng attachment : attachments) {
+            attachment.updateEntity(uploadRequestDto.getLnkgDmnNm(), uploadRequestDto.getLnkgDmnId());
+        }
+        return atflCd;
     }
 
+    /**
+     * 첨부파일 업로드 및 저장
+     *
+     * @param files
+     * @param uploadRequestDto
+     */
+    public String uploadAndSave(List<MultipartFile> files, AtflMngUploadRequestDto uploadRequestDto) {
+        String atflCd = PortalUtils.randomAlphanumeric(20);
 
+        for (int i = 0; i < files.size(); i++) {
+            AtflMngId attachmentId = AtflMngId.builder()
+                    .atflCd(atflCd)
+                    .atflSn(i + 1)
+                    .build();
+
+            // 물리적 파일 생성
+            AtflMngFileResponseDto fileResponseDto = upload(files.get(i), BASE_PATH, false);
+
+            atflMngRepository.save(fileResponseDto.toEntity(attachmentId, uploadRequestDto));
+        }
+
+        return atflCd;
+    }
 
     /**
      * 첨부파일 저장
@@ -450,6 +478,7 @@ public class AtflMngService extends AbstractService {
      * @param updateRequestDtoList
      * @return
      */
+    @Transactional
     public String uploadAndUpdate(List<MultipartFile> files,
                                   String attachmentCode,
                                   AtflMngUploadRequestDto uploadRequestDto,
@@ -487,7 +516,7 @@ public class AtflMngService extends AbstractService {
         for (AtflMngUpdateRequestDto saveRequestDto : updateRequestDtoList) {
             if ( "Y".equals(saveRequestDto.getDelYn())) {
                 AtflMng atflMng = findAttachmentByAtflId(saveRequestDto.getAtflId());
-                atflMng.updateIsDelYn(saveRequestDto.getDelYn());
+                atflMng.updateIsDelYn(saveRequestDto.getDelYn()); // 책임 위임의 원칙
             }
         }
     }
@@ -503,6 +532,45 @@ public class AtflMngService extends AbstractService {
                 // 파일을 찾을 수 없습니다.
                 .orElseThrow(() -> new EntityNotFoundException(getMessage("valid.file.not_found") + " ID= " + atflId));
     }
+
+    /**
+     * 첨부파일 저장 후 기능 저장 시 오류 날 경우
+     * 조회되는 첨부파일 목록 전부 삭제
+     * rollback
+     *
+     * @param attachmentCode
+     */
+    public void deleteAllEmptyEntity(String atflCd) throws EntityNotFoundException, BusinessMessageException {
+        List<AtflMng> attachmentList = atflMngRepository.findByCode(atflCd);
+
+        if (Objects.isNull(attachmentList) || attachmentList.size() <= 0) {
+            throw new EntityNotFoundException(getMessage("valid.file.not_found") + " ID= " + atflCd);
+        }
+
+        for (AtflMng attachment: attachmentList) {
+            // 첨부파일 저장 후 기능 저장 시 오류 날 경우에만 첨부파일 전체 삭제를 하므로
+            // entity 정보가 있는 경우에는 삭제하지 못하도록 한다.
+            if (attachment.haslnkgDmnId()) { // hasEntityId의 대체품
+                throw new BusinessMessageException(getMessage("valid.file.not_deleted"));
+            }
+            deleteFile(attachment);
+        }
+    }
+
+    /**
+     * 첨부파일 삭제
+     *
+     * @param atflMng
+     */
+    private void deleteFile(AtflMng atflMng) {
+        // 물리적 파일 삭제
+        boolean deleted = storageUtils.deleteFile(atflMng.getPhysFileNm());
+        if (!deleted) {
+            throw new BusinessMessageException(getMessage("valid.file.not_deleted"));
+        }
+        atflMngRepository.delete(atflMng);
+    }
+
 
 
 }

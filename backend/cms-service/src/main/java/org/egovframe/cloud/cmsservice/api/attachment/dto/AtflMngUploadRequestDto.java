@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -25,8 +26,12 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
+@Schema(description = "첨부파일 업로드 요청 DTO")
 public class AtflMngUploadRequestDto {
+    @Schema(description = "연결 도메인 명")
     private String lnkgDmnNm;
+    
+    @Schema(description = "연결 도메인 ID")
     private String lnkgDmnId;
 
     @Builder

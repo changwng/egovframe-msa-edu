@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 import org.egovframe.cloud.cmsservice.domain.attachment.AtflMng;
+
 /**
  * org.egovframe.cloud.cmsservice.api.attachment.dto.AtflMngResponseDto
  * <p>
@@ -29,38 +31,43 @@ import org.egovframe.cloud.cmsservice.domain.attachment.AtflMng;
 @Setter
 @NoArgsConstructor
 @ToString
+@Schema(description = "첨부파일 응답 DTO")
 public class AtflMngResponseDto {
-    private String atflCd;            // 첨부파일 코드
-    private Integer atflSn;           // 첨부파일 일련번호
-    private String atflId;            // 첨부파일 ID (URI용)
-    private String physFileNm;        // 물리 파일명
-    private String orgnlFileNm;       // 원본 파일명
-    private Long atflFlsz;            // 파일 크기
-    private String atflType;          // 파일 유형
-    private Long dwnldNocs;           // 다운로드 건수
-    private String delYn;             // 삭제 여부
-    private String lnkgDmnId;         // 연결 도메인 ID
-    private String lnkgDmnNm;         // 연결 도메인 명
-    private LocalDateTime reg_dt; // 생성일시
-
-   /* @Builder
-    public AtflMngResponseDto(String atflCd, Integer atflSn, String atflId, 
-            String physFileNm, String orgnlFileNm, Long atflFlsz, 
-            String atflType, Long dwnldNocs, String delYn, 
-            String lnkgDmnId, String lnkgDmnNm, LocalDateTime reg_dt) {
-        this.atflCd = atflCd;
-        this.atflSn = atflSn;
-        this.atflId = atflId;
-        this.physFileNm = physFileNm;
-        this.orgnlFileNm = orgnlFileNm;
-        this.atflFlsz = atflFlsz;
-        this.atflType = atflType;
-        this.dwnldNocs = dwnldNocs;
-        this.delYn = delYn;
-        this.lnkgDmnId = lnkgDmnId;
-        this.lnkgDmnNm = lnkgDmnNm;
-        this.reg_dt = reg_dt;
-    }*/
+    @Schema(description = "첨부파일 코드")
+    private String atflCd;
+    
+    @Schema(description = "첨부파일 일련번호")
+    private Integer atflSn;
+    
+    @Schema(description = "첨부파일 ID (URI용)")
+    private String atflId;
+    
+    @Schema(description = "물리 파일명")
+    private String physFileNm;
+    
+    @Schema(description = "원본 파일명")
+    private String orgnlFileNm;
+    
+    @Schema(description = "파일 크기")
+    private Long atflFlsz;
+    
+    @Schema(description = "파일 유형")
+    private String atflType;
+    
+    @Schema(description = "다운로드 건수")
+    private Long dwnldNocs;
+    
+    @Schema(description = "삭제 여부")
+    private String delYn;
+    
+    @Schema(description = "연결 도메인 ID")
+    private String lnkgDmnId;
+    
+    @Schema(description = "연결 도메인 명")
+    private String lnkgDmnNm;
+    
+    @Schema(description = "생성일시")
+    private LocalDateTime reg_dt;
 
     @Builder
     public AtflMngResponseDto(AtflMng atflMng) {

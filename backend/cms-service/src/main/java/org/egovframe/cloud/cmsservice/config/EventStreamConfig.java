@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import org.egovframe.cloud.cmsservice.api.attachment.dto.AtflMngEntityMessage;
 import org.egovframe.cloud.cmsservice.api.attachment.dto.AtflMngTempSaveRequestDto;
+import org.egovframe.cloud.cmsservice.api.attachment.dto.AtflMngUploadRequestDto;
 import org.egovframe.cloud.cmsservice.service.attachment.AtflMngService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,7 @@ public class EventStreamConfig {
     public Consumer<AtflMngEntityMessage> atflMngEntity() {
         return atflMngEntityMessage -> {
             log.debug("Received AtflMngEntityMessage: {}", atflMngEntityMessage);
-            AtflMngTempSaveRequestDto requestDto = AtflMngTempSaveRequestDto.builder()
+            AtflMngUploadRequestDto requestDto = AtflMngUploadRequestDto.builder()
                     .lnkgDmnId(atflMngEntityMessage.getEntityId())
                     .lnkgDmnNm(atflMngEntityMessage.getEntityName())
                     .build();

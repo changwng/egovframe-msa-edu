@@ -1,5 +1,6 @@
 package org.egovframe.cloud.cmsservice.api.attachment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,11 +24,21 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@Schema(description = "첨부파일 Base64 요청 DTO")
 public class AtflMngBase64RequestDto {
+    @Schema(description = "필드명")
     private String fieldName;
+    
+    @Schema(description = "파일 타입")
     private String fileType;
+    
+    @Schema(description = "Base64로 인코딩된 파일 데이터")
     private String fileBase64;
+    
+    @Schema(description = "원본 파일명")
     private String originalName;
+    
+    @Schema(description = "파일 크기")
     private Long size;
 
     @Builder
