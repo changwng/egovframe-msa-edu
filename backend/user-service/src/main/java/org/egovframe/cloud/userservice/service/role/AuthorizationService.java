@@ -26,8 +26,13 @@ import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * org.egovframe.cloud.userservice.service.role.AuthorizationService
@@ -77,6 +82,17 @@ public class AuthorizationService extends AbstractService {
     }
 
     /**
+     * 권한의 인가 전체 목록 조회
+     *
+     * @param roles 권한 목록
+     * @return List<AuthorizationListResponseDto> 인가 목록
+     */
+    @Cacheable(value = "cache-user-authorization-by-roles", key = "#roles")
+    public List<AuthorizationListResponseDto> findByRoles(List<String> roles) {
+        return authorizationRepository.findByRoles(roles);
+    }
+
+    /**
      * 권한의 인가 여부 확인
      * 사용자 서비스 시큐리티 필터에서 호출
      *
@@ -90,17 +106,6 @@ public class AuthorizationService extends AbstractService {
         List<AuthorizationListResponseDto> authorizationList = ((AuthorizationService) AopContext.currentProxy()).findByRoles(roles);
 
         return isContainMatch(authorizationList, request.getMethod(), GlobalConstant.USER_SERVICE_URI + request.getRequestURI());
-    }
-
-    /**
-     * 권한의 인가 전체 목록 조회
-     *
-     * @param roles 권한 목록
-     * @return List<AuthorizationListResponseDto> 인가 목록
-     */
-    @Cacheable(value = "cache-user-authorization-by-roles", key = "#roles")
-    public List<AuthorizationListResponseDto> findByRoles(List<String> roles) {
-        return authorizationRepository.findByRoles(roles);
     }
 
     /**
@@ -157,7 +162,29 @@ public class AuthorizationService extends AbstractService {
      * @param requestPath       요청 경로
      * @return Boolean 인가 여부
      */
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    private final Map<String, Boolean> matchCache = new ConcurrentHashMap<>();
+
+
     private Boolean isContainMatch(List<AuthorizationListResponseDto> authorizationList, String httpMethod, String requestPath) {
+        return authorizationList.parallelStream()
+                .filter(dto -> dto.getHttpMethodCode().equals(httpMethod))
+                .anyMatch(dto -> matchUrl(dto.getUrlPatternValue(), requestPath));
+    }
+
+    private boolean matchUrl(String pattern, String path) {
+        String cacheKey = pattern + ":" + path;
+        return matchCache.computeIfAbsent(cacheKey, k -> antPathMatcher.match(pattern, path));
+    }
+
+    /**
+     * 성능 튜닝 전 코드
+     * @param authorizationList
+     * @param httpMethod
+     * @param requestPath
+     * @return
+     */
+    private Boolean isContainMatch_old(List<AuthorizationListResponseDto> authorizationList, String httpMethod, String requestPath) {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
         for (AuthorizationListResponseDto dto : authorizationList) {
