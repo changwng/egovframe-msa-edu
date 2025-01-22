@@ -17,7 +17,7 @@ public class PstRepositoryImpl implements PstRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Pst> findAllBySearchCondition(String bbsId, String searchType, String searchKeyword, Pageable pageable) {
+    public Page<Pst> findAllBySearchCondition(Integer bbsId, String searchType, String searchKeyword, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(pst.pstId.bbsId.eq(bbsId));
         builder.and(pst.delYn.eq("N"));
@@ -62,7 +62,7 @@ public class PstRepositoryImpl implements PstRepositoryCustom {
     }
 
     @Override
-    public Long getNextPstNo(String bbsId) {
+    public Long getNextPstNo(Integer bbsId) {
         Long maxPstNo = queryFactory
                 .select(pst.pstId.pstNo.max())
                 .from(pst)
@@ -72,7 +72,7 @@ public class PstRepositoryImpl implements PstRepositoryCustom {
     }
 
     @Override
-    public Long getNextPstSeqNo(String bbsId) {
+    public Long getNextPstSeqNo(Integer bbsId) {
         Long maxPstSeqNo = queryFactory
                 .select(pst.pstSeqNo.max())
                 .from(pst)
@@ -82,7 +82,7 @@ public class PstRepositoryImpl implements PstRepositoryCustom {
     }
 
     @Override
-    public Long getNextPstSortSeq(String bbsId, Long upPstNo) {
+    public Long getNextPstSortSeq(Integer bbsId, Long upPstNo) {
         if (upPstNo == null) {
             // 새글인 경우
             Long maxPstSortSeq = queryFactory

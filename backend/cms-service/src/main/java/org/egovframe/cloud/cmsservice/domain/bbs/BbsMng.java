@@ -4,18 +4,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.egovframe.cloud.cmsservice.domain.BaseEntity;
+import org.egovframe.cloud.cmsservice.domain.post.Pst;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Table(name = "bbs_mng")
 public class BbsMng extends BaseEntity {
-
     @Id
-    @Column(name = "bbs_id", length = 10)
-    private String bbsId;                 // 게시판 ID
+    @Column(name = "bbs_id", columnDefinition = "integer" ,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer bbsId;                 // 게시판 ID
 
     @Column(name = "bbs_type_cd", length = 7, nullable = false)
     private String bbsTypeCd;            // 게시판 유형 코드
@@ -59,11 +64,18 @@ public class BbsMng extends BaseEntity {
     @Column(name = "popup_use_yn", length = 1, nullable = false)
     private String popupUseYn;           // 팝업 사용 여부
 
+    /**
+     * 게시물 엔티티
+     */
+    @OneToMany(mappedBy = "bbsMng", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Pst> psts = new ArrayList<>();
+
     @Builder
-    public BbsMng(String bbsId, String bbsTypeCd, String bbsNm, String bbsExpln,
-                 String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
-                 String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
-                 String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
+    public BbsMng(Integer bbsId, String bbsTypeCd, String bbsNm, String bbsExpln,
+                  String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
+                  String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
+                  String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
         this.bbsId = bbsId;
         this.bbsTypeCd = bbsTypeCd;
         this.bbsNm = bbsNm;
@@ -82,9 +94,9 @@ public class BbsMng extends BaseEntity {
     }
 
     public void update(String bbsTypeCd, String bbsNm, String bbsExpln,
-                      String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
-                      String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
-                      String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
+                       String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
+                       String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
+                       String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
         this.bbsTypeCd = bbsTypeCd;
         this.bbsNm = bbsNm;
         this.bbsExpln = bbsExpln;

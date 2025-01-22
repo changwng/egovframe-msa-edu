@@ -17,6 +17,7 @@ public class PstCmnt extends BaseEntity {
     @EmbeddedId
     private PstCmntId pstCmntId;         // 복합키 (bbsId + pstNo + cmntNo)
 
+
     @Column(name = "cmnt_cn", length = 1000)
     private String cmntCn;               // 댓글 내용
 
@@ -29,12 +30,22 @@ public class PstCmnt extends BaseEntity {
     @Column(name = "del_yn", length = 1, nullable = false)
     private String delYn;                // 삭제 여부
 
+/*    @MapsId("pstId") // PstCmntId.pstNo 매핑 //Same column is added more than once with different values for isInsertable 제거 해야함
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-        @JoinColumn(name = "bbs_id", referencedColumnName = "bbs_id", insertable = false, updatable = false),
-        @JoinColumn(name = "pst_no", referencedColumnName = "pst_no", insertable = false, updatable = false)
+            @JoinColumn(name = "bbs_id", referencedColumnName = "bbs_id", insertable = false, updatable = false),
+            @JoinColumn(name = "pst_no", referencedColumnName = "pst_no", insertable = false, updatable = false)
     })
-    private Pst pst;                     // 게시물 참조
+    private Pst pst;*/
+
+    @MapsId("pstId") // CommentId.postsId 매핑
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "bbs_id"), // referencedColumnName = "bbs_id", insertable = false, updatable = false 구문제외
+            @JoinColumn(name = "pst_no")
+    })
+    private Pst pst;
+    // 게시물 참조
 
     @Builder
     public PstCmnt(PstCmntId pstCmntId, String cmntCn, String wrtrNm,

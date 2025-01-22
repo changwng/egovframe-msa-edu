@@ -1,8 +1,10 @@
 package org.egovframe.cloud.cmsservice.domain.comment;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egovframe.cloud.cmsservice.domain.post.PstId;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,16 +12,21 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Embeddable
-public class PstCmntId implements Serializable {
+    public class PstCmntId implements Serializable {
 
-    @Column(name = "bbs_id", length = 10)
-    private String bbsId;
-
-    @Column(name = "pst_no")
-    private Long pstNo;
+    /**
+     * 게시물 복합키
+     */
+    private PstId pstId;
 
     @Column(name = "cmnt_no")
     private Long cmntNo;
+
+    @Builder
+    public PstCmntId(PstId pstId, Long cmntNo) {
+        this.pstId  = pstId;
+        this.cmntNo = cmntNo;
+    }
+
 }

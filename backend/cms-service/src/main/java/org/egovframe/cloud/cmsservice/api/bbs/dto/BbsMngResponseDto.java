@@ -5,7 +5,7 @@ import org.egovframe.cloud.cmsservice.domain.bbs.BbsMng;
 
 @Getter
 public class BbsMngResponseDto {
-    private String bbsId;
+    private Integer bbsId;
     private String bbsTypeCd;
     private String bbsNm;
     private String bbsExpln;

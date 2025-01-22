@@ -25,7 +25,7 @@ public class PstResponseDto {
     private String atflCd;
 
     public PstResponseDto(Pst entity) {
-        this.bbsId = entity.getPstId().getBbsId();
+        //this.bbsId = entity.getPstId().getBbsId();
         this.pstNo = entity.getPstId().getPstNo();
         this.pstTtl = entity.getPstTtl();
         this.pstCn = entity.getPstCn();

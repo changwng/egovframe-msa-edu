@@ -5,8 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.egovframe.cloud.cmsservice.domain.BaseEntity;
 import org.egovframe.cloud.cmsservice.domain.bbs.BbsMng;
+import org.egovframe.cloud.cmsservice.domain.comment.PstCmnt;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -17,10 +21,7 @@ public class Pst extends BaseEntity {
     @EmbeddedId
     private PstId pstId;                 // 복합키 (bbsId + pstNo)
 
-    @MapsId("bbsId")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bbs_id")
-    private BbsMng bbsMng;               // 게시판 엔티티
+
 
     @Column(name = "pst_ttl", length = 200, nullable = false)
     private String pstTtl;               // 게시물 제목
@@ -71,7 +72,19 @@ public class Pst extends BaseEntity {
     private String wrtrCplc;             // 작성자 연락처
 
     @Column(name = "atfl_cd", length = 20)
-    private String atflCd;               // 첨부파일 코드
+    private String atflCd;               // 첨부파일 코드 (UUID)
+
+    @MapsId("bbsId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bbs_id")
+    private BbsMng bbsMng;               // 게시판 엔티티
+
+    /**
+     * 댓글 엔티티
+     */
+    @OneToMany(mappedBy = "pst", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<PstCmnt> pstCmnts;
 
     @Builder
     public Pst(PstId pstId, BbsMng bbsMng, String pstTtl, String pstCn, Long inqNocs,
@@ -101,8 +114,8 @@ public class Pst extends BaseEntity {
     }
 
     public void update(String pstTtl, String pstCn, String refUrl,
-                      String popupYn, String upndFixYn, String prdPstgYn,
-                      String wrtrNm, String wrtrCplc, String atflCd) {
+                       String popupYn, String upndFixYn, String prdPstgYn,
+                       String wrtrNm, String wrtrCplc, String atflCd) {
         this.pstTtl = pstTtl;
         this.pstCn = pstCn;
         this.refUrl = refUrl;

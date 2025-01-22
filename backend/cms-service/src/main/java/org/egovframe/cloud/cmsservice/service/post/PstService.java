@@ -21,27 +21,27 @@ public class PstService {
     private final BbsMngRepository bbsMngRepository;
 
     @Transactional(readOnly = true)
-    public Page<PstResponseDto> findAll(String bbsId, Pageable pageable) {
+    public Page<PstResponseDto> findAll(Integer bbsId, Pageable pageable) {
         // TODO: Implement findAll with bbsId filter
         return pstRepository.findAll(pageable)
                 .map(PstResponseDto::new);
     }
 
     @Transactional(readOnly = true)
-    public Page<PstResponseDto> findAll(String bbsId, String searchType, String searchKeyword, Pageable pageable) {
+    public Page<PstResponseDto> findAll(Integer bbsId, String searchType, String searchKeyword, Pageable pageable) {
         return pstRepository.findAllBySearchCondition(bbsId, searchType, searchKeyword, pageable)
                 .map(PstResponseDto::new);
     }
 
     @Transactional(readOnly = true)
-    public PstResponseDto findById(String bbsId, Long pstNo) {
+    public PstResponseDto findById(Integer bbsId, Long pstNo) {
         Pst entity = findPstById(bbsId, pstNo);
         entity.increaseInqNocs(); // 조회수 증가
         return new PstResponseDto(entity);
     }
 
     @Transactional
-    public PstId save(String bbsId, PstSaveRequestDto requestDto) {
+    public PstId save(Integer bbsId, PstSaveRequestDto requestDto) {
         BbsMng bbsMng = findBbsMngById(bbsId);
 
         // 첨부파일 사용 여부 확인
@@ -63,7 +63,7 @@ public class PstService {
     }
 
     @Transactional
-    public PstId reply(String bbsId, Long upPstNo, PstSaveRequestDto requestDto) {
+    public PstId reply(Integer bbsId, Long upPstNo, PstSaveRequestDto requestDto) {
         // 상위 게시물 조회
         Pst parentPst = findPstById(bbsId, upPstNo);
         BbsMng bbsMng = parentPst.getBbsMng();
@@ -98,7 +98,7 @@ public class PstService {
     }
 
     @Transactional
-    public PstId update(String bbsId, Long pstNo, PstSaveRequestDto requestDto) {
+    public PstId update(Integer bbsId, Long pstNo, PstSaveRequestDto requestDto) {
         Pst entity = findPstById(bbsId, pstNo);
         BbsMng bbsMng = entity.getBbsMng();
 
@@ -123,34 +123,34 @@ public class PstService {
     }
 
     @Transactional
-    public void delete(String bbsId, Long pstNo, String delRsn) {
+    public void delete(Integer bbsId, Long pstNo, String delRsn) {
         Pst entity = findPstById(bbsId, pstNo);
         entity.delete(delRsn);
     }
 
-    private Pst findPstById(String bbsId, Long pstNo) {
+    private Pst findPstById(Integer bbsId, Long pstNo) {
         return pstRepository.findById(new PstId(bbsId, pstNo))
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 없습니다. bbsId=" + bbsId + ", pstNo=" + pstNo));
     }
 
-    private BbsMng findBbsMngById(String bbsId) {
+    private BbsMng findBbsMngById(Integer bbsId) {
         return bbsMngRepository.findById(bbsId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시판이 없습니다. bbsId=" + bbsId));
     }
 
-    private Long generatePstNo(String bbsId) {
+    private Long generatePstNo(Integer bbsId) {
         return pstRepository.getNextPstNo(bbsId);
     }
 
-    private Long generatePstSeqNo(String bbsId) {
+    private Long generatePstSeqNo(Integer bbsId) {
         return pstRepository.getNextPstSeqNo(bbsId);
     }
 
-    private Long generatePstSortSeq(String bbsId) {
+    private Long generatePstSortSeq(Integer bbsId) {
         return pstRepository.getNextPstSortSeq(bbsId, null);
     }
 
-    private Long generatePstSortSeq(String bbsId, Long upPstNo) {
+    private Long generatePstSortSeq(Integer bbsId, Long upPstNo) {
         return pstRepository.getNextPstSortSeq(bbsId, upPstNo);
     }
 }

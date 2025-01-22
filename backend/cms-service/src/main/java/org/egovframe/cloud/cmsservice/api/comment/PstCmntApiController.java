@@ -18,28 +18,28 @@ public class PstCmntApiController {
     private final PstCmntService pstCmntService;
 
     @GetMapping
-    public ResponseEntity<Page<PstCmntResponseDto>> findAll(@PathVariable String bbsId,
+    public ResponseEntity<Page<PstCmntResponseDto>> findAll(@PathVariable Integer bbsId,
                                                           @PathVariable Long pstNo,
                                                           Pageable pageable) {
         return ResponseEntity.ok(pstCmntService.findAll(bbsId, pstNo, pageable));
     }
 
     @GetMapping("/{cmntNo}")
-    public ResponseEntity<PstCmntResponseDto> findById(@PathVariable String bbsId,
+    public ResponseEntity<PstCmntResponseDto> findById(@PathVariable Integer bbsId,
                                                      @PathVariable Long pstNo,
                                                      @PathVariable Long cmntNo) {
         return ResponseEntity.ok(pstCmntService.findById(bbsId, pstNo, cmntNo));
     }
 
     @PostMapping
-    public ResponseEntity<PstCmntId> save(@PathVariable String bbsId,
+    public ResponseEntity<PstCmntId> save(@PathVariable Integer bbsId,
                                         @PathVariable Long pstNo,
                                         @RequestBody PstCmntSaveRequestDto requestDto) {
         return ResponseEntity.ok(pstCmntService.save(bbsId, pstNo, requestDto));
     }
 
     @PutMapping("/{cmntNo}")
-    public ResponseEntity<PstCmntId> update(@PathVariable String bbsId,
+    public ResponseEntity<PstCmntId> update(@PathVariable Integer bbsId,
                                           @PathVariable Long pstNo,
                                           @PathVariable Long cmntNo,
                                           @RequestBody PstCmntSaveRequestDto requestDto) {
@@ -47,7 +47,7 @@ public class PstCmntApiController {
     }
 
     @DeleteMapping("/{cmntNo}")
-    public ResponseEntity<Void> delete(@PathVariable String bbsId,
+    public ResponseEntity<Void> delete(@PathVariable Integer bbsId,
                                      @PathVariable Long pstNo,
                                      @PathVariable Long cmntNo) {
         pstCmntService.delete(bbsId, pstNo, cmntNo);

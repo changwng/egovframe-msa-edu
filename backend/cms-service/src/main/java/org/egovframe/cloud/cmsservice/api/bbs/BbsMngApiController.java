@@ -46,7 +46,7 @@ public class BbsMngApiController {
      * @return
      */
     @GetMapping("/{bbsId}")
-    public ResponseEntity<BbsMngResponseDto> findById(@PathVariable String bbsId) {
+    public ResponseEntity<BbsMngResponseDto> findById(@PathVariable Integer bbsId) {
         return ResponseEntity.ok(bbsMngService.findById(bbsId));
     }
 
@@ -58,7 +58,7 @@ public class BbsMngApiController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> save(@RequestBody BbsMngSaveRequestDto requestDto) {
+    public ResponseEntity<Integer> save(@RequestBody BbsMngSaveRequestDto requestDto) {
         return ResponseEntity.ok(bbsMngService.save(requestDto));
     }
 
@@ -70,7 +70,7 @@ public class BbsMngApiController {
      * @return
      */
     @PutMapping("/{bbsId}")
-    public ResponseEntity<String> update(@PathVariable String bbsId, @RequestBody BbsMngSaveRequestDto requestDto) {
+    public ResponseEntity<Integer> update(@PathVariable Integer bbsId, @RequestBody BbsMngSaveRequestDto requestDto) {
         return ResponseEntity.ok(bbsMngService.update(bbsId, requestDto));
     }
 
@@ -82,7 +82,7 @@ public class BbsMngApiController {
      */
     @DeleteMapping("/{bbsId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(@PathVariable String bbsId) {
+    public ResponseEntity<Void> delete(@PathVariable Integer bbsId) {
         bbsMngService.delete(bbsId);
         return ResponseEntity.noContent().build();
     }

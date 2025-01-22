@@ -25,21 +25,21 @@ public class BbsMngService {
     }
 
     @Transactional(readOnly = true)
-    public BbsMngResponseDto findById(String bbsId) {
+    public BbsMngResponseDto findById(Integer bbsId) {
         BbsMng entity = findBbsMngById(bbsId);
         return new BbsMngResponseDto(entity);
     }
 
     @Transactional
-    public String save(BbsMngSaveRequestDto requestDto) {
-        String bbsId = generateBbsId();
+    public Integer save(BbsMngSaveRequestDto requestDto) {
+        Integer bbsId = generateBbsId();
         BbsMng bbsMng = requestDto.toEntity();
         bbsMng = bbsMngRepository.save(bbsMng);
         return bbsMng.getBbsId();
     }
 
     @Transactional
-    public String update(String bbsId, BbsMngSaveRequestDto requestDto) {
+    public Integer update(Integer bbsId, BbsMngSaveRequestDto requestDto) {
         BbsMng entity = findBbsMngById(bbsId);
         
         entity.update(
@@ -63,17 +63,17 @@ public class BbsMngService {
     }
 
     @Transactional
-    public void delete(String bbsId) {
+    public void delete(Integer bbsId) {
         BbsMng entity = findBbsMngById(bbsId);
         bbsMngRepository.delete(entity);
     }
 
-    private BbsMng findBbsMngById(String bbsId) {
+    private BbsMng findBbsMngById(Integer bbsId) {
         return bbsMngRepository.findById(bbsId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시판이 없습니다. bbsId=" + bbsId));
     }
 
-    private String generateBbsId() {
-        return "BBS_" + UUID.randomUUID().toString().substring(0, 6);
+    private Integer generateBbsId() {
+        return 1 ; //"BBS_" + UUID.randomUUID().toString().substring(0, 6);
     }
 }

@@ -23,20 +23,20 @@ public class PstCmntService {
     private final PstRepository pstRepository;
 
     @Transactional(readOnly = true)
-    public Page<PstCmntResponseDto> findAll(String bbsId, Long pstNo, Pageable pageable) {
+    public Page<PstCmntResponseDto> findAll(Integer bbsId, Long pstNo, Pageable pageable) {
         // TODO: Implement findAll with bbsId and pstNo filter
         return pstCmntRepository.findAll(pageable)
                 .map(PstCmntResponseDto::new);
     }
 
     @Transactional(readOnly = true)
-    public PstCmntResponseDto findById(String bbsId, Long pstNo, Long cmntNo) {
+    public PstCmntResponseDto findById(Integer bbsId, Long pstNo, Long cmntNo) {
         PstCmnt entity = findPstCmntById(bbsId, pstNo, cmntNo);
         return new PstCmntResponseDto(entity);
     }
 
     @Transactional
-    public PstCmntId save(String bbsId, Long pstNo, PstCmntSaveRequestDto requestDto) {
+    public PstCmntId save(Integer bbsId, Long pstNo, PstCmntSaveRequestDto requestDto) {
         Pst pst = findPstById(bbsId, pstNo);
         BbsMng bbsMng = pst.getBbsMng();
 
@@ -47,7 +47,7 @@ public class PstCmntService {
 
         // 댓글 번호 생성
         Long cmntNo = generateCmntNo(bbsId, pstNo);
-        PstCmntId pstCmntId = new PstCmntId(bbsId, pstNo, cmntNo);
+        PstCmntId pstCmntId = null; // new PstCmntId(bbsId, pstNo, cmntNo);
 
         PstCmnt pstCmnt = requestDto.toEntity(pstCmntId, pst);
         pstCmnt = pstCmntRepository.save(pstCmnt);
@@ -55,7 +55,7 @@ public class PstCmntService {
     }
 
     @Transactional
-    public PstCmntId update(String bbsId, Long pstNo, Long cmntNo, PstCmntSaveRequestDto requestDto) {
+    public PstCmntId update(Integer bbsId, Long pstNo, Long cmntNo, PstCmntSaveRequestDto requestDto) {
         PstCmnt entity = findPstCmntById(bbsId, pstNo, cmntNo);
         
         entity.update(
@@ -67,22 +67,23 @@ public class PstCmntService {
     }
 
     @Transactional
-    public void delete(String bbsId, Long pstNo, Long cmntNo) {
+    public void delete(Integer bbsId, Long pstNo, Long cmntNo) {
         PstCmnt entity = findPstCmntById(bbsId, pstNo, cmntNo);
         entity.delete();
     }
 
-    private PstCmnt findPstCmntById(String bbsId, Long pstNo, Long cmntNo) {
-        return pstCmntRepository.findById(new PstCmntId(bbsId, pstNo, cmntNo))
+    private PstCmnt findPstCmntById(Integer bbsId, Long pstNo, Long cmntNo) {
+        PstId pstId = new PstId(bbsId, pstNo);
+        return pstCmntRepository.findById(new   PstCmntId(pstId, cmntNo))
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 없습니다. bbsId=" + bbsId + ", pstNo=" + pstNo + ", cmntNo=" + cmntNo));
     }
 
-    private Pst findPstById(String bbsId, Long pstNo) {
+    private Pst findPstById(Integer bbsId, Long pstNo) {
         return pstRepository.findById(new PstId(bbsId, pstNo))
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 없습니다. bbsId=" + bbsId + ", pstNo=" + pstNo));
     }
 
-    private Long generateCmntNo(String bbsId, Long pstNo) {
+    private Long generateCmntNo(Integer bbsId, Long pstNo) {
         // TODO: Implement comment number generation logic
         return 1L;
     }

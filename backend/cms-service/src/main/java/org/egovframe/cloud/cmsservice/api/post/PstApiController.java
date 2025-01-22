@@ -19,7 +19,7 @@ public class PstApiController {
     private final PstService pstService;
 
     @GetMapping
-    public ResponseEntity<Page<PstResponseDto>> findAll(@PathVariable String bbsId,
+    public ResponseEntity<Page<PstResponseDto>> findAll(@PathVariable Integer bbsId,
                                                       @RequestParam(required = false) String searchType,
                                                       @RequestParam(required = false) String searchKeyword,
                                                       Pageable pageable) {
@@ -27,28 +27,28 @@ public class PstApiController {
     }
 
     @GetMapping("/{pstNo}")
-    public ResponseEntity<PstResponseDto> findById(@PathVariable String bbsId,
+    public ResponseEntity<PstResponseDto> findById(@PathVariable Integer bbsId,
                                                  @PathVariable Long pstNo) {
         return ResponseEntity.ok(pstService.findById(bbsId, pstNo));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<PstId> save(@PathVariable String bbsId,
+    public ResponseEntity<PstId> save(@PathVariable Integer bbsId,
                                     @RequestBody PstSaveRequestDto requestDto) {
         return ResponseEntity.ok(pstService.save(bbsId, requestDto));
     }
 
     @PostMapping("/{upPstNo}/reply")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<PstId> reply(@PathVariable String bbsId,
+    public ResponseEntity<PstId> reply(@PathVariable Integer bbsId,
                                      @PathVariable Long upPstNo,
                                      @RequestBody PstSaveRequestDto requestDto) {
         return ResponseEntity.ok(pstService.reply(bbsId, upPstNo, requestDto));
     }
 
     @PutMapping("/{pstNo}")
-    public ResponseEntity<PstId> update(@PathVariable String bbsId,
+    public ResponseEntity<PstId> update(@PathVariable Integer bbsId,
                                       @PathVariable Long pstNo,
                                       @RequestBody PstSaveRequestDto requestDto) {
         return ResponseEntity.ok(pstService.update(bbsId, pstNo, requestDto));
@@ -56,7 +56,7 @@ public class PstApiController {
 
     @DeleteMapping("/{pstNo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(@PathVariable String bbsId,
+    public ResponseEntity<Void> delete(@PathVariable Integer bbsId,
                                      @PathVariable Long pstNo,
                                      @RequestParam String delRsn) {
         pstService.delete(bbsId, pstNo, delRsn);
