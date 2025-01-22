@@ -4,12 +4,32 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.egovframe.cloud.cmsservice.domain.bbs.BbsMng;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+
+/**
+ * org.egovframe.cloud.boardservice.api.board.dto.BbsMngUpdateRequestDto
+ * <p>
+ * 게시판 수정 요청 DTO 클래스
+ *
+ * @author 표준프레임워크센터 jooho
+ * @version 1.0
+ * @since 2021/07/08
+ *
+ * <pre>
+ * << 개정이력(Modification Information) >>
+ *
+ *     수정일        수정자           수정내용
+ *  ----------    --------    ---------------------------
+ *  2021/07/08    jooho       최초 생성
+ * </pre>
+ */
 @Getter
 @NoArgsConstructor
-public class BbsMngSaveRequestDto {
+public class BbsMngUpdateRequestDto {
+
     /**
      * 게시판 구분 코드
      */
@@ -78,13 +98,31 @@ public class BbsMngSaveRequestDto {
      */
     @NotNull(message = "{board.popup_use_yn} {err.required}")
     private String popupUseYn;
-
+    /**
+     * 게시판 수정 요청 DTO 클래스 생성자
+     * 빌더 패턴으로 객체 생성
+     *
+     * @param bbsTypeCd    게시판 구분 코드
+     * @param bbsNm        게시판 이름
+     * @param bbsExpln     게시판 설명
+     * @param refUseYn     사용 여부
+     * @param atflUseYn    첨부파일 사용 여부
+     * @param atflMaxCnt   첨부파일 최대 개수(NULL 허용)
+     * @param atflMaxFlsz  첨부파일 최대 크기(NULL 허용)
+     * @param ansUseYn     답변 사용 여부
+     * @param cmntUseYn    댓글 사용 여부
+     * @param dgstfnEvlUseYn 만족도 평가 사용 여부
+     * @param smsUseYn     SMS 발송 사용 여부
+     * @param upndFixUseYn 상단 고정 표시 사용 여부
+     * @param pstgPrdUseYn 게시물 기간 사용 여부
+     * @param popupUseYn   팝업 사용 여부
+     */
     @Builder
-    public BbsMngSaveRequestDto(String bbsTypeCd, String bbsNm, String bbsExpln,
-                               String refUseYn, String atflUseYn, Integer atflMaxCnt,
-                               Long atflMaxFlsz, String ansUseYn, String cmntUseYn,
-                               String dgstfnEvlUseYn, String smsUseYn, String upndFixUseYn,
-                               String pstgPrdUseYn, String popupUseYn) {
+    public BbsMngUpdateRequestDto(String bbsTypeCd, String bbsNm, String bbsExpln,
+                                  String refUseYn, String atflUseYn, Integer atflMaxCnt,
+                                  Long atflMaxFlsz, String ansUseYn, String cmntUseYn,
+                                  String dgstfnEvlUseYn, String smsUseYn, String upndFixUseYn,
+                                  String pstgPrdUseYn, String popupUseYn) {
         this.bbsTypeCd = bbsTypeCd;
         this.bbsNm = bbsNm;
         this.bbsExpln = bbsExpln;
@@ -101,6 +139,11 @@ public class BbsMngSaveRequestDto {
         this.popupUseYn = popupUseYn;
     }
 
+    /**
+     * 게시판 등록 요청 DTO 속성 값으로 게시판 엔티티 빌더를 사용하여 객체 생성
+     *
+     * @return BbsMng 게시판 엔티티
+     */
     public BbsMng toEntity() {
         return BbsMng.builder()
                 .bbsTypeCd(bbsTypeCd)
@@ -119,4 +162,5 @@ public class BbsMngSaveRequestDto {
                 .popupUseYn(popupUseYn)
                 .build();
     }
+
 }

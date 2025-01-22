@@ -60,7 +60,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
      */
     @Override
 	public Page<BoardListResponseDto> findPage(RequestDto requestDto, Pageable pageable) {
-        JPQLQuery<BoardListResponseDto> query = jpaQueryFactory
+         JPQLQuery<BoardListResponseDto> query = jpaQueryFactory
                 .select(constructor(BoardListResponseDto.class,
                         QBoard.board.boardNo,
                         QBoard.board.boardName,

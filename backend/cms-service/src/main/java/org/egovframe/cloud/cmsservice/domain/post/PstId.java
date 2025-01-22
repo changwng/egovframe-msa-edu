@@ -20,7 +20,7 @@ public class PstId implements Serializable {
     @Column(name = "bbs_id", length = 10)
     private Integer bbsId;
 
-    @Column(name = "pst_no" )
+    @Column(name = "pst_no")
     private Long pstNo;
 
     /**

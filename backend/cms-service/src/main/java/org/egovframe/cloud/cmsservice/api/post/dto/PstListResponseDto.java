@@ -1,20 +1,16 @@
 package org.egovframe.cloud.cmsservice.api.post.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.egovframe.cloud.cmsservice.domain.post.Pst;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import com.querydsl.core.annotations.QueryProjection;
-import java.util.List;
-import java.util.ArrayList;
-import org.egovframe.cloud.cmsservice.api.bbs.dto.BbsMngResponseDto;
 
 /**
- * PstResponseDto
+ * PstListResponseDto
  * <p>
- * 게시물 상세 응답 DTO 클래스
+ * 게시물 목록 응답 DTO 클래스
  *
  * @author USER
  * @version 1.0
@@ -22,8 +18,9 @@ import org.egovframe.cloud.cmsservice.api.bbs.dto.BbsMngResponseDto;
  */
 @Getter
 @NoArgsConstructor
-public class PstResponseDto implements Serializable {
+public class PstListResponseDto implements Serializable {
     private static final long serialVersionUID = 1L;
+
     /**
      * 게시판 ID
      */
@@ -73,7 +70,8 @@ public class PstResponseDto implements Serializable {
     private String upndFixYn;
 
     @Schema(description = "기간 게시 여부")
-    private String prdPstgYn;
+    private String prdPstgYn;            // 기간 게시 여부
+
     /**
      * 게시물 일련번호
      */
@@ -143,27 +141,13 @@ public class PstResponseDto implements Serializable {
     /**
      * 신규 여부
      */
-    @Schema(description = "신규여부")
     private Boolean isNew;
 
-    /**
-     * 게시판 응답 DTO
-     */
-    private BbsMngResponseDto bmsMng;
-    /**
-     * 이전 게시물 응답 DTO List
-     */
-    private List<PstSimpleResponseDto> prevPosts;
-
-    /**
-     * 다음 게시물 응답 DTO List
-     */
-    private List<PstSimpleResponseDto> nextPosts;
     @QueryProjection
-    public PstResponseDto(Integer bbsId, Long pstNo, String pstTtl, String pstCn, Long inqNocs, String refUrl, String popupYn
-            , String upndFixYn, String prdPstgYn, Long pstSeqNo, Long upPstNo, Integer ansLoc, Long pstSortSeq, String pstPswd, String delYn
-            , String delRsn, String wrtrNm, String wrtrCplc, String atflCd, LocalDateTime regDt
-            , BbsMngResponseDto bmsMng ) {
+    public PstListResponseDto(Integer bbsId, Long pstNo, String pstTtl, String pstCn, Long inqNocs, String refUrl,
+                               String popupYn, String upndFixYn, String prdPstgYn, Long pstSeqNo, Long upPstNo, Integer ansLoc,
+                               Long pstSortSeq, String pstPswd, String delYn, String delRsn, String wrtrNm,
+                               String wrtrCplc, String atflCd, LocalDateTime regDt ) {
         this.bbsId = bbsId;
         this.pstNo = pstNo;
         this.pstTtl = pstTtl;
@@ -184,54 +168,6 @@ public class PstResponseDto implements Serializable {
         this.wrtrCplc = wrtrCplc;
         this.atflCd = atflCd;
         this.regDt = regDt;
-        this.bmsMng = bmsMng;
-
-       // this.isNew = regDt.plusDays(this.board.getNewDisplayDayCount()).compareTo(LocalDateTime.now()) <= 0;
         this.isNew = regDt.plusDays(2).compareTo(LocalDateTime.now()) >= 0;
-    }
-
-    public PstResponseDto(Pst entity) {
-       this.bbsId = entity.getBbsMng().getBbsId();
-       this.pstNo = entity.getPstId().getPstNo();
-        this.pstTtl = entity.getPstTtl();
-        this.pstCn = entity.getPstCn();
-        this.inqNocs = entity.getInqNocs();
-        this.refUrl = entity.getRefUrl();
-        this.popupYn = entity.getPopupYn();
-        this.upndFixYn = entity.getUpndFixYn();
-        this.pstSeqNo = entity.getPstSeqNo();
-        this.upPstNo = entity.getUpPstNo();
-        this.ansLoc = entity.getAnsLoc();
-        this.pstSortSeq = entity.getPstSortSeq();
-        this.pstPswd = entity.getPstPswd();
-        this.delYn = entity.getDelYn();
-        this.delRsn = entity.getDelRsn();
-        this.wrtrNm = entity.getWrtrNm();
-        this.wrtrCplc = entity.getWrtrCplc();
-        this.atflCd = entity.getAtflCd();
-        this.regDt = entity.getRegDt();
-        this.prdPstgYn = entity.getPrdPstgYn();
-        this.isNew = regDt.plusDays(2).compareTo(LocalDateTime.now()) >= 0;
-    }
-
-    /**
-     * 조회 수 증가
-     */
-    public void increaseInqNocs() {
-        this.inqNocs = this.inqNocs + 1;
-    }
-
-    /**
-     * 이전 게시물
-     */
-    public void setPrevPosts(List<PstSimpleResponseDto> prevPosts) {
-        this.prevPosts = prevPosts == null ? null : new ArrayList<>(prevPosts);
-    }
-
-    /**
-     * 다음 게시물
-     */
-    public void setNextPosts(List<PstSimpleResponseDto> nextPosts) {
-        this.nextPosts = nextPosts == null ? null : new ArrayList<>(nextPosts);
     }
 }

@@ -73,9 +73,9 @@ public class BbsMng extends BaseEntity {
 
     @Builder
     public BbsMng(Integer bbsId, String bbsTypeCd, String bbsNm, String bbsExpln,
-                  String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
-                  String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
-                  String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
+                 String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
+                 String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
+                 String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
         this.bbsId = bbsId;
         this.bbsTypeCd = bbsTypeCd;
         this.bbsNm = bbsNm;
@@ -94,9 +94,9 @@ public class BbsMng extends BaseEntity {
     }
 
     public void update(String bbsTypeCd, String bbsNm, String bbsExpln,
-                       String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
-                       String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
-                       String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
+                      String refUseYn, String atflUseYn, Integer atflMaxCnt, Long atflMaxFlsz,
+                      String ansUseYn, String cmntUseYn, String dgstfnEvlUseYn, String smsUseYn,
+                      String upndFixUseYn, String pstgPrdUseYn, String popupUseYn) {
         this.bbsTypeCd = bbsTypeCd;
         this.bbsNm = bbsNm;
         this.bbsExpln = bbsExpln;

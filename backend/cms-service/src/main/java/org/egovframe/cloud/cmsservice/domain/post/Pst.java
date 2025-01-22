@@ -114,8 +114,8 @@ public class Pst extends BaseEntity {
     }
 
     public void update(String pstTtl, String pstCn, String refUrl,
-                       String popupYn, String upndFixYn, String prdPstgYn,
-                       String wrtrNm, String wrtrCplc, String atflCd) {
+                      String popupYn, String upndFixYn, String prdPstgYn,
+                      String wrtrNm, String wrtrCplc, String atflCd) {
         this.pstTtl = pstTtl;
         this.pstCn = pstCn;
         this.refUrl = refUrl;

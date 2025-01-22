@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @Embeddable
-    public class PstCmntId implements Serializable {
+public class PstCmntId implements Serializable {
 
     /**
      * 게시물 복합키

@@ -33,8 +33,8 @@ public class PstCmnt extends BaseEntity {
 /*    @MapsId("pstId") // PstCmntId.pstNo 매핑 //Same column is added more than once with different values for isInsertable 제거 해야함
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "bbs_id", referencedColumnName = "bbs_id", insertable = false, updatable = false),
-            @JoinColumn(name = "pst_no", referencedColumnName = "pst_no", insertable = false, updatable = false)
+        @JoinColumn(name = "bbs_id", referencedColumnName = "bbs_id", insertable = false, updatable = false),
+        @JoinColumn(name = "pst_no", referencedColumnName = "pst_no", insertable = false, updatable = false)
     })
     private Pst pst;*/
 
