@@ -65,10 +65,28 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: "*"
+      base-path: /actuator
   endpoint:
     health:
       show-details: always
+    info:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: CMS Service
+    description: 컨텐츠 관리 기능을 제공
+  java:
+    version: ${java.version}
+  spring:
+    framework:
+      version: ${spring-framework.version}
+    boot:
+      version: ${spring-boot.version}
 
 # Swagger 설정
 springdoc:

@@ -23,11 +23,11 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime reg_dt;
+    private LocalDateTime regDt;
 
     @LastModifiedBy
     private String updr;
 
     @LastModifiedDate
-    private LocalDateTime updt_dt;
+    private LocalDateTime updtDt;
 }

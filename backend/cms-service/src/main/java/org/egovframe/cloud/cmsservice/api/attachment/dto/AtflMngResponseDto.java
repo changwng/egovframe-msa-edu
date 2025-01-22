@@ -67,7 +67,7 @@ public class AtflMngResponseDto {
     private String lnkgDmnNm;
     
     @Schema(description = "생성일시")
-    private LocalDateTime reg_dt;
+    private LocalDateTime regDt;
 
     @Builder
     public AtflMngResponseDto(AtflMng atflMng) {
@@ -82,6 +82,6 @@ public class AtflMngResponseDto {
         this.delYn = atflMng.getDelYn();
         this.lnkgDmnId = atflMng.getLnkgDmnId();
         this.lnkgDmnNm = atflMng.getLnkgDmnNm();
-        this.reg_dt = atflMng.getReg_dt();
+        this.regDt = atflMng.getRegDt();
     }
 }
