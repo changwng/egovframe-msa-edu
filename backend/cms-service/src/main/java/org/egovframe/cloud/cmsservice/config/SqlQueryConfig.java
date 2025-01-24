@@ -1,4 +1,4 @@
-package org.egovframe.cloud.boardservice.config;
+package org.egovframe.cloud.cmsservice.config;
 
 import com.querydsl.sql.MySQLTemplates;
 import com.querydsl.sql.PostgreSQLTemplates;
@@ -48,7 +48,7 @@ public class SqlQueryConfig {
      * @return Configuration 설정
      */
     public com.querydsl.sql.Configuration querydslConfiguration() {
-        //SQLTemplates templates = MySQLTemplates.builder().build(); // MySQL
+    //    SQLTemplates templates = MySQLTemplates.builder().build(); // MySQL
         SQLTemplates templates = PostgreSQLTemplates.builder().build(); // POSTGRESQL
         com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
         configuration.setExceptionTranslator(new SpringExceptionTranslator());

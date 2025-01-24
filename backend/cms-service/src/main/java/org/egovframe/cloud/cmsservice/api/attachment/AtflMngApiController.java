@@ -44,6 +44,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/v1/atfl")
 public class AtflMngApiController {
 
     private final AtflMngService atflMngService;
@@ -56,7 +57,7 @@ public class AtflMngApiController {
      * @param file
      * @return
      */
-    @PostMapping(value = "/api/v1/atfl/upload")
+    @PostMapping(value = "/upload")
     @ResponseStatus(HttpStatus.CREATED)
     public AtflMngFileResponseDto upload(@RequestParam("file") MultipartFile file) {
         return atflMngService.uploadFile(file);
@@ -70,7 +71,7 @@ public class AtflMngApiController {
      * @param files
      * @return
      */
-    @PostMapping(value = "/api/v1/atfl/upload/multi")
+    @PostMapping(value = "/upload/multi")
     @ResponseStatus(HttpStatus.CREATED)
     public List<AtflMngFileResponseDto> uploadMulti(@RequestParam("files") List<MultipartFile> files) {
         return atflMngService.uploadFiles(files);
@@ -83,7 +84,7 @@ public class AtflMngApiController {
      * @param editorRequestDto
      * @return
      */
-    @PostMapping(value = "/api/v1/atfl/upload/editor")
+    @PostMapping(value = "/upload/editor")
     @ResponseStatus(HttpStatus.CREATED)
     public AtflMngEditorResponseDto uploadEditor(@RequestBody AtflMngBase64RequestDto editorRequestDto) {
         return atflMngService.uploadEditor(editorRequestDto);
@@ -95,7 +96,7 @@ public class AtflMngApiController {
      * @param imagename
      * @return
      */
-    @GetMapping(value = "/api/v1/atfl/images/editor/{imagename}")
+    @GetMapping(value = "/images/editor/{imagename}")
     public ResponseEntity<byte[]> loadImages(@PathVariable("imagename") String imagename) {
         AtflMngImageResponseDto image = atflMngService.loadImage(imagename);
         return ResponseEntity.ok()
@@ -109,7 +110,7 @@ public class AtflMngApiController {
      * @param atflId
      * @return
      */
-    @GetMapping(value = "/api/v1/atfl/images/{atflId}")
+    @GetMapping(value = "/images/{atflId}")
     public ResponseEntity<byte[]> loadImagesByUniqueId(@PathVariable String atflId) {
         AtflMngImageResponseDto image = atflMngService.loadImageByUniqueId(atflId);
         return ResponseEntity.ok()
@@ -123,7 +124,7 @@ public class AtflMngApiController {
      * @param atflId
      * @return
      */
-    @GetMapping(value = "/api/v1/atfl/download/{atflId}")
+    @GetMapping(value = "/download/{atflId}")
     public ResponseEntity<?> downloadFile(@PathVariable String atflId) {
         AtflMngDownloadResponseDto downloadFile = atflMngService.downloadFile(atflId);
 
@@ -177,7 +178,7 @@ public class AtflMngApiController {
      * @param atflCd
      * @return
      */
-    @GetMapping(value = "/api/v1/atfl/attachments/{atflCd}")
+    @GetMapping(value = "/attachments/{atflCd}")
     public List<AtflMngResponseDto> findByCode(@PathVariable String atflCd) {
         return atflMngService.findByCode(atflCd);
     }
@@ -188,7 +189,7 @@ public class AtflMngApiController {
      * @param atflId
      * @return
      */
-    @GetMapping(value = "/api/v1/atfl/attachments/download/{atflId}")
+    @GetMapping(value = "/attachments/download/{atflId}")
     public ResponseEntity<?> downloadAttachment(@PathVariable String atflId) {
         AtflMngDownloadResponseDto downloadFile = atflMngService.downloadAttachment(atflId);
 
@@ -226,7 +227,7 @@ public class AtflMngApiController {
      * @param saveRequestDtoList
      * @return 새로 생성한 첨부파일 code
      */
-    @PostMapping(value = "/api/v1/atfl/attachments/file")
+    @PostMapping(value = "/attachments/file")
     @ResponseStatus(HttpStatus.CREATED)
     public String save(@RequestBody List<AtflMngTempSaveRequestDto> saveRequestDtoList) {
         return atflMngService.save(saveRequestDtoList);
@@ -241,7 +242,7 @@ public class AtflMngApiController {
      * @param saveRequestDtoList
      * @return
      */
-    @PutMapping(value = "/api/v1/atfl/attachments/file/{atflCd}")
+    @PutMapping(value = "/attachments/file/{atflCd}")
     public String saveByCode(@PathVariable String atflCd, @RequestBody List<AtflMngTempSaveRequestDto> saveRequestDtoList) {
         return atflMngService.saveByCode(atflCd, saveRequestDtoList);
     }
@@ -253,7 +254,7 @@ public class AtflMngApiController {
      * @param pageable
      * @return
      */
-    @GetMapping(value = "/api/v1/atfl/attachments")
+    @GetMapping(value = "/attachments")
     public Page<AtflMngResponseDto> search(RequestDto searchRequestDto, Pageable pageable) {
         return atflMngService.search(searchRequestDto, pageable);
     }
@@ -265,7 +266,7 @@ public class AtflMngApiController {
      * @param delYn
      * @return
      */
-    @PutMapping(value = "/api/v1/atfl/attachments/{atflId}/{delYn}")
+    @PutMapping(value = "/attachments/{atflId}/{delYn}")
     public String toggleDelete(@PathVariable String atflId, @PathVariable String delYn) {
         return atflMngService.toggleDelete(atflId, delYn);
     }
@@ -276,7 +277,7 @@ public class AtflMngApiController {
      *
      * @param atflId
      */
-    @DeleteMapping(value = "/api/v1/atfl/attachments/{atflId}")
+    @DeleteMapping(value = "/attachments/{atflId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String atflId) {
         atflMngService.delete(atflId);
@@ -290,7 +291,7 @@ public class AtflMngApiController {
      * @param uploadRequestDto
      * @return
      */
-    @PostMapping(value = "/api/v1/atfl/attachments/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/attachments/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public String uploadAndSave(@RequestPart(value = "files", required = true) List<MultipartFile> files,
                               @RequestPart(value = "info", required = false) AtflMngUploadRequestDto uploadRequestDto) {
@@ -309,7 +310,7 @@ public class AtflMngApiController {
      * @param updateRequestDtoList
      * @return
      */
-    @PutMapping(value = "/api/v1/atfl/attachments/upload/{atflCd}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/attachments/upload/{atflCd}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String uploadAndUpdate(@PathVariable String atflCd,
                                 @RequestPart(value = "files", required = true) List<MultipartFile> files,
                                 @RequestPart(value = "info", required = true) AtflMngUploadRequestDto uploadRequestDto,
@@ -326,7 +327,7 @@ public class AtflMngApiController {
      * @param updateRequestDtoList
      * @return
      */
-    @PutMapping(value = "/api/v1/atfl/attachments/{atflCd}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/attachments/{atflCd}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String update(@PathVariable String atflCd,
                         @RequestPart(value = "info") AtflMngUploadRequestDto uploadRequestDto,
                         @RequestPart(value = "list") List<AtflMngUpdateRequestDto> updateRequestDtoList) {
@@ -343,7 +344,7 @@ public class AtflMngApiController {
      * @param uploadRequestDto
      * @return
      */
-    @PutMapping("/api/v1/atfl/attachments/{atflCd}/info")
+    @PutMapping("/attachments/{atflCd}/info")
     public String updateEntity(@PathVariable String atflCd,
                              @RequestBody AtflMngUploadRequestDto uploadRequestDto) {
         return atflMngService.updateEntity(atflCd, uploadRequestDto);
@@ -356,7 +357,7 @@ public class AtflMngApiController {
      *
      * @param atflCd
      */
-    @DeleteMapping("/api/v1/atfl/{atflCd}/children")
+    @DeleteMapping("/attachments/{atflCd}/children")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAllEmptyEntity(@PathVariable String atflCd) {
         atflMngService.deleteAllEmptyEntity(atflCd);

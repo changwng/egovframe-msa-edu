@@ -63,6 +63,8 @@ dependencies {
     // querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0'
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
+    implementation 'com.querydsl:querydsl-sql:5.0.0'
+    implementation 'com.querydsl:querydsl-sql-spring:5.0.0'
 
     // openapi docs
     implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.7.0'
@@ -70,6 +72,10 @@ dependencies {
         exclude group: 'org.webjars', module: 'swagger-ui'
     }
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    // upload tus
+    implementation "me.desair.tus:tus-java-server:1.0.0-2.0"
+    // thumbnail
+    implementation 'org.jcodec:jcodec-javase:0.2.5'
 
     // lombok
     implementation 'org.projectlombok:lombok'

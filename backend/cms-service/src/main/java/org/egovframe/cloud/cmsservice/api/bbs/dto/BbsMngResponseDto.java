@@ -4,6 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 //import org.egovframe.cloud.cmsservice.api.post.dto.PstSimpleResponseDto;
+import org.egovframe.cloud.cmsservice.api.post.dto.PstSimpleResponseDto;
 import org.egovframe.cloud.cmsservice.domain.bbs.BbsMng;
 
 import java.util.ArrayList;
@@ -161,8 +162,8 @@ public BbsMngResponseDto(Integer bbsId, String bbsTypeCd, String bbsNm, String b
      *
      * @param psts 게시물 목록
      */
-//     public void setNewestPosts(List<PstSimpleResponseDto> psts) {
-//        this.psts = psts == null ? null : new ArrayList<>(psts);
-//    }
+     public void setNewestPosts(List<PstSimpleResponseDto> psts) {
+      //  this.pst = psts == null ? null : new ArrayList<>(psts);
+    }
 
 }

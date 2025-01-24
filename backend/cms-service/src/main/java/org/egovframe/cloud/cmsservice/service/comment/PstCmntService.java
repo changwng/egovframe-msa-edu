@@ -10,6 +10,7 @@ import org.egovframe.cloud.cmsservice.domain.comment.PstCmntRepository;
 import org.egovframe.cloud.cmsservice.domain.post.Pst;
 import org.egovframe.cloud.cmsservice.domain.post.PstId;
 import org.egovframe.cloud.cmsservice.domain.post.PstRepository;
+import org.egovframe.cloud.common.service.AbstractService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class PstCmntService {
+public class PstCmntService extends AbstractService {
 
     private final PstCmntRepository pstCmntRepository;
     private final PstRepository pstRepository;
@@ -47,7 +48,7 @@ public class PstCmntService {
 
         // 댓글 번호 생성
         Long cmntNo = generateCmntNo(bbsId, pstNo);
-        PstCmntId pstCmntId = null; // new PstCmntId(bbsId, pstNo, cmntNo);
+        PstCmntId pstCmntId = new PstCmntId( new PstId(bbsId, pstNo) , cmntNo);
 
         PstCmnt pstCmnt = requestDto.toEntity(pstCmntId, pst);
         pstCmnt = pstCmntRepository.save(pstCmnt);
