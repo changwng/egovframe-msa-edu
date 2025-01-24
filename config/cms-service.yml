@@ -32,8 +32,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: -1
+      max-request-size: -1
   cloud:
     stream:
       function:
@@ -107,3 +107,11 @@ logging:
     org.egovframe: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# tus 분할 파일 업로드 관련 path 설정
+tus:
+  data:
+    path: "files/tus/temp"
+    expiration: 60000
+  save:
+    path: "files/attach"
