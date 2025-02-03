@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: attachment-service
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+app:
+  file:
+    storage:
+      path: ${java.io.tmpdir}/egovframe-test/files/attachment
+      allowed-extensions: jpg,jpeg,gif,png,pdf,doc,docx,xls,xlsx,ppt,pptx,txt
+      max-file-size: 104857600  # 100MB
+      temp-file-retention: 1
+
+logging:
+  level:
+    root: INFO
+    org.egovframe: DEBUG
+    org.hibernate.SQL: DEBUG
+
+# OpenAPI 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    configUrl: /attachment-service/v3/api-docs/swagger-config
+    url: /attachment-service/v3/api-docs
+  api-docs:
+    path: /v3/api-docs
+  packages-to-scan: org.egovframe.cloud.attachment.api
